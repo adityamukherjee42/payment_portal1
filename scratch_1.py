@@ -4,6 +4,13 @@ import pandas as pd
 from PIL import Image
 import SessionState
 import pymongo
+from instamojo_wrapper import Instamojo
+API_KEY = "test_2f83fb338bea7ea58020bb8b50f"
+
+AUTH_TOKEN = "test_5d2e8cf45646124ef084e81ad36"
+
+api = Instamojo(api_key="test_2f83fb338bea7ea58020bb8b50f", auth_token="test_5d2e8cf45646124ef084e81ad36", endpoint='https://test.instamojo.com/api/1.1/')
+
 st.set_page_config(layout="wide")
 col1, col2 = st.beta_columns([1, 1])
 f_order=[]
@@ -33,7 +40,8 @@ def order_coltwo(a,k,m,d,z,p):
     return z
 tableno=st.sidebar.text_input("Type Your Table Number")
 db = conn.restaurent1
-collection=db[tableno]
+if tableno:
+    collection=db[tableno]
 cusine=st.sidebar.selectbox("Select Choice",['None','Indian','Continental','Bread','Dessert','Order Confirmation'])
 
 if cusine=='Indian':
@@ -136,9 +144,24 @@ if cusine=='Dessert':
     for key, value in freq.items():
         st.sidebar.write("{} -Rs {} : {}".format(key[0], key[1], value))
 if cusine=='Order Confirmation':
+        col1.title("Details for payment")
+        amount = col1.text_input("Enter amount")
+        purpose = col1.text_input("Enter purpose")
+        email = col1.text_input("Enter email")
+        name = col1.text_input("Enter Name")
+        if amount and purpose and email and name:
+            response = api.payment_request_create(
+                amount=amount,
+                purpose=purpose,
+                buyer_name=name,
+                send_email=True,
+                email=email,
+                redirect_url="https://www.mailmunch.com/blog/thank-you-page-examples/"
+            )
+            order = 0
         cusine="None"
         result=[]
-        st.title("Your Order")
+        col2.title("Your Order")
         freq = {}
         for item in final_order.State:
             if (item in freq):
@@ -146,7 +169,7 @@ if cusine=='Order Confirmation':
             else:
                 freq[item] = 1
         for key, value in freq.items():
-            st.write("{} -Rs {} : {}".format(key[0], key[1], value))
+            col2.write("{} -Rs {} : {}".format(key[0], key[1], value))
             result.append(
                 {
                     'Dish': key[0],
@@ -154,16 +177,18 @@ if cusine=='Order Confirmation':
                     'Quantity': value
                 }
             )
-        if st.button("Place order"):
+        if col2.button("Place order"):
             collection.insert_many(result)
-        if st.button('click for payment'):
-            js = "window.open('https://payportal1.herokuapp.com/')"  # New tab or window
+
+        if col2.button('Clear Final order'):
+            collection.delete_many({})
+        if (col1.button("Pay") and order==0):
+            js = "window.open('{}')".format(response['payment_request']['longurl'])  # New tab or window
             html = '<img src onerror="{}">'.format(js)
             div = Div(text=html)
             st.bokeh_chart(div)
-        df_order = pd.DataFrame({})
-
-        if st.button('Clear Final order'):
-            collection.delete_many({})
+            order=order+1
+        else:
+            st.write("Enter details again")
 
 

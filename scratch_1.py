@@ -17,7 +17,7 @@ f_order=[]
 final_order=SessionState.get(State=[])
 st.sidebar.image('./Images/logo.jpg')
 try:
-    conn = pymongo.MongoClient('127.0.0.1',27017)
+    conn = pymongo.MongoClient('mongodb+srv://aditya:12345@cluster0.rutst.mongodb.net/test')
     print("Connected successfully!!!")
 except:
     print("Could not connect to MongoDB")
@@ -39,7 +39,7 @@ def order_coltwo(a,k,m,d,z,p):
     my_expander.write(d)
     return z
 tableno=st.sidebar.text_input("Type Your Table Number")
-db = conn.restaurent1
+db = conn.Restaurent1
 if tableno:
     collection=db[tableno]
 cusine=st.sidebar.selectbox("Select Choice",['None','Indian','Continental','Bread','Dessert','Order Confirmation'])
@@ -98,9 +98,8 @@ if cusine=='Bread':
 
 
     final_order.State = order_colone('Add Butter Naan', './Images/10.jpeg', 'Butter Naan',
-                                     '',
-                                     final_order.State,30)
-    final_order.State = order_colone('Add Garlic Kulcha', './Images/11.jpeg', 'Garlic Kulcha','',final_order.State)
+                                     '',final_order.State,30)
+    final_order.State = order_colone('Add Garlic Kulcha', './Images/11.jpeg', 'Garlic Kulcha','',final_order.State,50)
     final_order.State = order_coltwo('Add Missi Roti', './Images/12.jpeg', 'Missi Roti',
                                      '',
                                      final_order.State,40)

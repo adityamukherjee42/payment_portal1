@@ -157,16 +157,15 @@ if cusine=='Order Confirmation':
         purpose ="Food"
         name = col1.text_input("Enter Name")
         email = col1.text_input("Enter email")
-        if amount and purpose and email and name:
-            response = api.payment_request_create(
-                amount=amount,
-                purpose=purpose,
-                buyer_name=name,
-                send_email=True,
-                email=email,
-                redirect_url="https://share.streamlit.io/adityamukherjee42/payment_portal1/main/scratch_1.py"
-            )
-            order = 0
+        response = api.payment_request_create(
+            amount=amount,
+            purpose=purpose,
+            buyer_name=name,
+            send_email=True,
+            email=email,
+            redirect_url="https://share.streamlit.io/adityamukherjee42/payment_portal1/main/scratch_1.py"
+        )
+        order = 0
         cusine="None"
         result=[]
         col2.title("Your Order")
@@ -189,8 +188,9 @@ if cusine=='Order Confirmation':
             collection.insert_many(result)
             final_order.amo1=final_order.amo
             final_order.State = []
+            col2.write("Refresh and order more food or else Proceed to payment")
         if (col1.button("Pay") and order==0):
-            js = "window.location.href ='{}'".format(response['payment_request']['longurl'])  # New tab or window
+            js ="window.open('{}')".format(response['payment_request']['longurl'])  # New tab or window
             html = '<img src onerror="{}">'.format(js)
             div = Div(text=html)
             st.bokeh_chart(div)

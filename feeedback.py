@@ -23,3 +23,4 @@ result.append(
             )
 if st.button("Done"):
     collection.insert_many(result)
+    st.markdown("<h3>Thank you , Hope you had a good experience</h3>")

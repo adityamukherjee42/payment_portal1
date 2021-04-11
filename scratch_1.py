@@ -163,7 +163,7 @@ if cusine=='Order Confirmation':
             buyer_name=name,
             send_email=True,
             email=email,
-            redirect_url="https://share.streamlit.io/adityamukherjee42/payment_portal1/main/scratch_1.py"
+            redirect_url="https://share.streamlit.io/adityamukherjee42/payment_portal1/main/feeedback.py"
         )
         order = 0
         cusine="None"

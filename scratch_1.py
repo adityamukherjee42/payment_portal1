@@ -14,7 +14,7 @@ api = Instamojo(api_key="test_2f83fb338bea7ea58020bb8b50f", auth_token="test_5d2
 st.set_page_config(layout="wide")
 col1, col2 = st.beta_columns([1, 1])
 f_order=[]
-final_order=SessionState.get(State=[])
+final_order=SessionState.get(State=[],amo=0,amo1=0)
 st.sidebar.image('./Images/logo.jpg')
 try:
     conn = pymongo.MongoClient('mongodb+srv://aditya:12345@cluster0.rutst.mongodb.net/test')
@@ -124,13 +124,11 @@ if cusine=='Dessert':
     final_order.State = order_colone('Add Nutella Waffle', './Images/14.jpeg', 'Nutella Waffle',
                                      'An overload of Nutella between freshly cooked waffles topped with chocolate sauce and ice cream',
                                      final_order.State,110)
-    final_order.State = order_colone('Add Sizzling Brownie', './Images/15.jpeg', 'Sizzling Brownie','Heavenly Brownies served as sizzlers with vanilla ice cream and a dash of chocolate syrup',final_order.State,180)
-    final_order.State = order_coltwo('Add Strawberry Mousse', './Images/16.jpeg', 'Strawberry Mousse',
-                                     'Airy, Fluffy and light whipped cream mixed with wholesome strawberry syrup with chunks of strawberry and a spoonful of strawberry ice cream',
-                                     final_order.State,150)
-    final_order.State = order_coltwo('Add Blueberry Cheesecake', './Images/17.jpeg', 'A mixture of whipping cream and cream cheese on a biscotti crust of crush cookies served with freshly prepared blueberry sauce topped with sweetened blueberries',
-                                     '',
-                                     final_order.State,170)
+    final_order.State = order_colone('Add Sizzling Brownie', './Images/16.jpeg', 'Sizzling Brownie','Heavenly Brownies served as sizzlers with vanilla ice cream and a dash of chocolate syrup',final_order.State,180)
+    final_order.State = order_coltwo('Add Strawberry Mousse', './Images/15.jpeg', 'Strawberry Mousse',
+                                     'Airy, Fluffy and light whipped cream mixed with wholesome strawberry syrup with chunks of strawberry and a spoonful of strawberry ice cream',final_order.State,150)
+    final_order.State = order_coltwo('Add Blueberry Cheesecake','./Images/17.jpeg', 'Blueberry Cheesecake',
+                                     'A mixture of whipping cream and cream cheese on a biscotti crust of crush cookies served with freshly prepared blueberry sauce topped with sweetened blueberries',final_order.State,170)
     if st.sidebar.button('Clear order'):
         final_order.State=[]
     st.sidebar.title("Your Order")
@@ -144,10 +142,21 @@ if cusine=='Dessert':
         st.sidebar.write("{} -Rs {} : {}".format(key[0], key[1], value))
 if cusine=='Order Confirmation':
         col1.title("Details for payment")
-        amount = col1.text_input("Enter amount")
-        purpose = col1.text_input("Enter purpose")
-        email = col1.text_input("Enter email")
+        freq = {}
+        amount=0
+        final_order.amo=0
+        for item in final_order.State:
+            if (item in freq):
+                freq[item] += 1
+            else:
+                freq[item] = 1
+        for key, value in freq.items():
+            final_order.amo=final_order.amo+(key[1]*value)
+        amount = final_order.amo+final_order.amo1
+        col1.markdown("<h3>The final amount is {}</h3>".format(amount),unsafe_allow_html=True)
+        purpose ="Food"
         name = col1.text_input("Enter Name")
+        email = col1.text_input("Enter email")
         if amount and purpose and email and name:
             response = api.payment_request_create(
                 amount=amount,
@@ -155,7 +164,7 @@ if cusine=='Order Confirmation':
                 buyer_name=name,
                 send_email=True,
                 email=email,
-                redirect_url="https://www.mailmunch.com/blog/thank-you-page-examples/"
+                redirect_url="https://share.streamlit.io/adityamukherjee42/payment_portal1/main/scratch_1.py"
             )
             order = 0
         cusine="None"
@@ -178,16 +187,15 @@ if cusine=='Order Confirmation':
             )
         if col2.button("Place order"):
             collection.insert_many(result)
-
-        if col2.button('Clear Final order'):
-            collection.delete_many({})
+            final_order.amo1=final_order.amo
+            final_order.State = []
         if (col1.button("Pay") and order==0):
-            js = "window.open('{}')".format(response['payment_request']['longurl'])  # New tab or window
+            js = "window.location.href ='{}'".format(response['payment_request']['longurl'])  # New tab or window
             html = '<img src onerror="{}">'.format(js)
             div = Div(text=html)
             st.bokeh_chart(div)
             order=order+1
         else:
-            st.write("Enter details again")
+            st.write("")
 
 

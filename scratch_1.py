@@ -70,6 +70,23 @@ if cusine=='Indian':
             freq[item] = 1
     for key, value in freq.items():
         st.sidebar.write("{} -Rs {} : {}".format(key[0], key[1], value))
+if cusine=='None':
+    st.markdown("<h1>Welcome to Wriggle n Giggle!</h1>", unsafe_allow_html=True)
+    st.markdown(
+        "<p align='justify' style='font-size:20px;font-family:arial;'><br> This restaurant is a one-stop shop for all amazing delicacies from a range of cuisines that will leave your appetites wanting more. From a veritable repository of mouth-watering dishes, you now have the option of dining-in, ordering online and take-away. You can now place, modify your order  with our newly launched website all from the comfort of your device. Join us for a time of delectable dining and precious moments..</p>",
+        unsafe_allow_html=True)
+    st.markdown("<h3>Developed by </h3>",unsafe_allow_html=True)
+    col1, col2, col3 = st.beta_columns((1, 1, 1))
+    col1.image("./Images/p3.jpeg", width=150)
+    col1.markdown("<h4>Aditya Mukherjee</h4>",unsafe_allow_html=True)
+    col1.markdown("<h5>Designation : </h5> Technical Lead", unsafe_allow_html=True)
+    col2.image("./Images/p1.jpeg", width=150)
+    col2.markdown("<h4>Sumedha Banthia</h4>",unsafe_allow_html=True)
+    col2.markdown("<h5>Designation : </h5>Business Analyst",unsafe_allow_html=True)
+    col3.image("./Images/p2.jpeg", width=150)
+    col3.markdown("<h4>Anand Iyer</h4>",unsafe_allow_html=True)
+    col3.markdown("<h5>Designation : </h5> Project Manager", unsafe_allow_html=True)
+
 if cusine=='Continental':
     final_order.State = order_colone('Add Farmhouse Pizza', './Images/6.jpeg', 'Farmhouse Pizza',
                                      ' A heavenly cheesy pizza combined with fresh vegetables like tomato, onion, bell pepper, corn and toppings of mushroom and jalapenos',

@@ -14,7 +14,7 @@ api = Instamojo(api_key="test_2f83fb338bea7ea58020bb8b50f", auth_token="test_5d2
 st.set_page_config(layout="wide")
 col1, col2 = st.beta_columns([1, 1])
 f_order=[]
-final_order=SessionState.get(State=[],amo=0,amo1=0)
+final_order=SessionState.get(State=[],amo=0,amo1=0,update="False")
 st.sidebar.image('./Images/logo.jpg')
 try:
     conn = pymongo.MongoClient('mongodb+srv://aditya:12345@cluster0.rutst.mongodb.net/test')
@@ -201,17 +201,24 @@ if cusine=='Order Confirmation':
                     'Quantity': value
                 }
             )
+        if final_order.update=='False':
+            col1.markdown("<h4>Please place order to pay</h4>",unsafe_allow_html=True)
         if col2.button("Place order"):
             collection.insert_many(result)
-            final_order.amo1=final_order.amo
-            final_order.State = []
-            col2.write("Refresh and order more food or else Proceed to payment")
-        if (col1.button("Pay") and order==0):
-            js ="window.open('{}')".format(response['payment_request']['longurl'])  # New tab or window
-            html = '<img src onerror="{}">'.format(js)
-            div = Div(text=html)
-            st.bokeh_chart(div)
-            order=order+1
+            final_order.update="True"
+        if final_order.update=='True':
+            if col2.button("Please press here if you want to continue ordering or else please click pay"):
+                col2.write("Please continue ordering more food")
+                final_order.amo1 = final_order.amo
+                final_order.State = []
+                final_order.update = "False"
+            if (col1.button("Pay") and final_order.update=='True'):
+                js ="window.open('{}')".format(response['payment_request']['longurl'])  # New tab or window
+                html = '<img src onerror="{}">'.format(js)
+                div = Div(text=html)
+                st.bokeh_chart(div)
+                order=order+1
+                final_order.update = "False"
         else:
             st.write("")
 

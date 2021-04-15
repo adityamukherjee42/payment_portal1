@@ -13,7 +13,7 @@ db = conn.Restaurent1
 collection=db['Feedback']
 
 tableno = st.text_input("Enter Table Number","1")
-feedback = st.text_area("Enter your valuebale  Feedback"," ")
+feedback = st.text_area("Enter your valuable  Feedback"," ")
 result=[]
 result.append(
                 {

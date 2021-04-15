@@ -162,15 +162,19 @@ if cusine=='Order Confirmation':
         freq = {}
         amount=0
         final_order.amo=0
-        for item in final_order.State:
-            if (item in freq):
-                freq[item] += 1
-            else:
-                freq[item] = 1
-        for key, value in freq.items():
-            final_order.amo=final_order.amo+(key[1]*value)
-        amount = final_order.amo+final_order.amo1
-        col1.markdown("<h3>The final amount is {}</h3>".format(amount),unsafe_allow_html=True)
+        if final_order.update=='True':
+            for item in final_order.State:
+                if (item in freq):
+                    freq[item] += 1
+                else:
+                    freq[item] = 1
+            for key, value in freq.items():
+                final_order.amo=final_order.amo+(key[1]*value)
+        amount = final_order.amo + final_order.amo1
+        if final_order.update=='True':
+            col1.markdown("<h3>The final amount is {}</h3>".format(amount), unsafe_allow_html=True)
+        if final_order.update=='False':
+            col1.markdown("<h3>Please Order food</h3>", unsafe_allow_html=True)
         purpose ="Food"
         name = col1.text_input("Enter Name")
         email = col1.text_input("Enter email")
@@ -205,9 +209,10 @@ if cusine=='Order Confirmation':
             col1.markdown("<h4>Please place order to pay</h4>",unsafe_allow_html=True)
         if col2.button("Place order"):
             collection.insert_many(result)
+            col2.write("Press the refresh button to update the final amount")
             final_order.update="True"
         if final_order.update=='True':
-            if col2.button("Please press here if you want to continue ordering or else please click pay"):
+            if col2.button("Continue Ordering food"):
                 col2.write("Please continue ordering more food")
                 final_order.amo1 = final_order.amo
                 final_order.State = []
@@ -220,6 +225,8 @@ if cusine=='Order Confirmation':
                 order=order+1
                 final_order.update = "False"
         else:
+            st.write("")
+        if(st.sidebar.button("Click here to Refresh")):
             st.write("")
 
 
